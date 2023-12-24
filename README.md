@@ -36,3 +36,36 @@ composable(route = CategoryNavigation.route, arguments = CategoryNavigation.argu
             )
         }
 ```
+
+# How does generated route look like?
+```kotlin
+public object CategoryNavigation {
+public const val categoryIdArg: String = "categoryIdArg"
+
+    public const val categoryNameArg: String = "categoryNameArg"
+
+    public val destination: String = "category_destination"
+
+    public val route: String =
+        "category_route/$categoryIdArg={$categoryIdArg}/$categoryNameArg={$categoryNameArg}"
+
+    public fun arguments(): List<NamedNavArgument> {
+        // list of arguments
+        return listOf(navArgument(categoryIdArg) {
+            type = NavType.IntType
+            nullable = false
+        }, navArgument(categoryNameArg) {
+            type = NavType.StringType
+            nullable = false
+        })
+    }
+
+    public fun categoryId(navBackStackEntry: NavBackStackEntry): Int =
+        navBackStackEntry.arguments?.getInt(categoryIdArg)
+            ?: throw IllegalArgumentException("categoryId is required")
+
+    public fun categoryName(navBackStackEntry: NavBackStackEntry): String =
+        navBackStackEntry.arguments?.getString(categoryNameArg)
+            ?: throw IllegalArgumentException("categoryName is required")
+}
+```
