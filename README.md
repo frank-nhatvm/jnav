@@ -3,7 +3,7 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
 
 ## How to use
 # Add JNav annotation to the screen that you want to generate route
-`code`
+```kotlin
     @Composable
     @JNav(
     destination = "category_destination",
@@ -25,14 +25,14 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
     categoryName: String
     ) {
     }
-`code`
+```kotlin
 
 # Use generated route
-`code`
+```kotlin
 composable(route = CategoryNavigation.route, arguments = CategoryNavigation.arguments()) {
             CategoryScreen(
                 categoryId = CategoryNavigation.categoryId(it),
                 categoryName = CategoryNavigation.categoryName(it)
             )
         }
-`code`
+```kotlin
