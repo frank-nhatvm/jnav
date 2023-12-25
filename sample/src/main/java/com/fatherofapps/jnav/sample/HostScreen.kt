@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 @Composable
 fun HostScreen() {
@@ -12,7 +13,11 @@ fun HostScreen() {
 
         composable(route = HomeScreenNavigation.route) {
             HomeScreen(openCategory = { cateId, cateName ->
-//navController.navigate(CategoryNavigation.)
+                navController.navigate(
+                    CategoryNavigation.createRoute(
+                        categoryId = cateId, categoryName = cateName, parentCategoryId = null
+                    )
+                )
             })
         }
 
@@ -20,7 +25,8 @@ fun HostScreen() {
 
             CategoryScreen(
                 categoryId = CategoryNavigation.categoryId(it),
-                categoryName = CategoryNavigation.categoryName(it)
+                categoryName = CategoryNavigation.categoryName(it),
+                parentCateId = CategoryNavigation.parentCategoryId(it)
             )
         }
 

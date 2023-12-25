@@ -54,7 +54,7 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
         }
         objectBuilder.addProperty(jNavData.destinationProperty())
         objectBuilder.addProperty(jNavData.routeProperty())
-
+        objectBuilder.addFunction(jNavData.generateCreateRouteFun())
         fileSpec.addType(objectBuilder.build())
         fileSpec.build().writeTo(environment.codeGenerator, false)
 

@@ -46,6 +46,38 @@ data class JNavData(
             .initializer("\"${builder.toString()}\"").build()
     }
 
+    fun generateCreateRouteFun(): FunSpec{
+        val createRouteFun = FunSpec.builder("createRoute").returns(String::class)
+
+        val builder = StringBuilder()
+        builder.append(baseRoute)
+
+        if(arguments.isNotEmpty()){
+            arguments.sortedBy { it.isNullable }.forEach {
+                jNavTypeData ->
+                createRouteFun.addParameter(
+                    jNavTypeData.name, jNavTypeData.navArgumentData.returnDatatype
+                )
+            }
+
+
+            arguments.forEach {jNavTypeData ->
+                if (jNavTypeData.isNullable) {
+                    builder.append("?")
+                } else {
+                    builder.append("/")
+                }
+                builder.append("\$${jNavTypeData.nameArg()}=\$${jNavTypeData.name}")
+            }
+
+
+        }
+        createRouteFun.addStatement("return·\"$builder\"")
+
+
+        return createRouteFun.build()
+    }
+
     fun listArgumentProperties(): List<PropertySpec> {
         return arguments.map { it.generateProperty() }
     }
@@ -86,7 +118,7 @@ data class JNavTypeData(
 ) {
 
 
-    internal data class NavArgumentData(
+     data class NavArgumentData(
         val returnDatatype: TypeName,
         val getterFun: String,
         val navType: String
@@ -178,7 +210,7 @@ data class JNavTypeData(
         return NavArgumentData(returnDataType.copy(nullable = isNullable), getterFun, navType)
     }
 
-    private val navArgumentData: NavArgumentData = initNavArgumentData()
+     val navArgumentData: NavArgumentData = initNavArgumentData()
 
     fun generateArgument(): String {
         return """

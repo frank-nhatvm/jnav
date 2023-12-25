@@ -17,7 +17,10 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
             JNavArg(
             name = "categoryName",
             type = String::class
-            )
+            ),
+            JNavArg(name = "parentCategoryId",
+            type = String::class,
+            isNullable = true)
     ]
     )
     fun CategoryScreen(
@@ -29,43 +32,74 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
 
 # Use generated route
 ```kotlin
-composable(route = CategoryNavigation.route, arguments = CategoryNavigation.arguments()) {
-            CategoryScreen(
-                categoryId = CategoryNavigation.categoryId(it),
-                categoryName = CategoryNavigation.categoryName(it)
+NavHost(navController = navController, startDestination = HomeScreenNavigation.route) {
+
+    composable(route = HomeScreenNavigation.route) {
+        HomeScreen(openCategory = { cateId, cateName ->
+            navController.navigate(
+                CategoryNavigation.createRoute(
+                    categoryId = cateId, categoryName = cateName, parentCategoryId = null
+                )
             )
-        }
+        })
+    }
+
+    composable(route = CategoryNavigation.route, arguments = CategoryNavigation.arguments()) {
+
+        CategoryScreen(
+            categoryId = CategoryNavigation.categoryId(it),
+            categoryName = CategoryNavigation.categoryName(it),
+            parentCateId = CategoryNavigation.parentCategoryId(it)
+        )
+    }
+
+}
 ```
 
 # How does generated route look like?
 ```kotlin
 public object CategoryNavigation {
-public const val categoryIdArg: String = "categoryIdArg"
+    public const val categoryIdArg: String = "categoryIdArg"
 
     public const val categoryNameArg: String = "categoryNameArg"
+
+    public const val parentCategoryIdArg: String = "parentCategoryIdArg"
 
     public val destination: String = "category_destination"
 
     public val route: String =
-        "category_route/$categoryIdArg={$categoryIdArg}/$categoryNameArg={$categoryNameArg}"
+        "category_route/$categoryIdArg={$categoryIdArg}/$categoryNameArg={$categoryNameArg}?$parentCategoryIdArg={$parentCategoryIdArg}"
 
     public fun arguments(): List<NamedNavArgument> {
         // list of arguments
-        return listOf(navArgument(categoryIdArg) {
+        return listOf(navArgument(categoryIdArg){
             type = NavType.IntType
             nullable = false
-        }, navArgument(categoryNameArg) {
+        },navArgument(categoryNameArg){
             type = NavType.StringType
             nullable = false
+        },navArgument(parentCategoryIdArg){
+            type = NavType.StringType
+            nullable = true
         })
     }
 
     public fun categoryId(navBackStackEntry: NavBackStackEntry): Int =
-        navBackStackEntry.arguments?.getInt(categoryIdArg)
-            ?: throw IllegalArgumentException("categoryId is required")
+        navBackStackEntry.arguments?.getInt(categoryIdArg) ?: throw
+        IllegalArgumentException("categoryId is required")
 
     public fun categoryName(navBackStackEntry: NavBackStackEntry): String =
-        navBackStackEntry.arguments?.getString(categoryNameArg)
-            ?: throw IllegalArgumentException("categoryName is required")
+        navBackStackEntry.arguments?.getString(categoryNameArg) ?: throw
+        IllegalArgumentException("categoryName is required")
+
+    public fun parentCategoryId(navBackStackEntry: NavBackStackEntry): String? =
+        navBackStackEntry.arguments?.getString(parentCategoryIdArg)
+
+    public fun createRoute(
+        categoryId: Int,
+        categoryName: String,
+        parentCategoryId: String?,
+    ): String =
+        "category_route/$categoryIdArg=$categoryId/$categoryNameArg=$categoryName?$parentCategoryIdArg=$parentCategoryId"
 }
 ```
