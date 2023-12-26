@@ -2,7 +2,7 @@
 JNAV is a library to generate the code for route of Jetpack Compose Navigation.
 
 ## How to use
-##  Add Jnav as dependency into your build gradle of your module
+#  Add Jnav as dependency into your build gradle of your module
 ```kotlin
     plugins {
         id("com.google.devtools.ksp")
@@ -112,3 +112,18 @@ public object CategoryNavigation {
         "category_route/$categoryIdArg=$categoryId/$categoryNameArg=$categoryName?$parentCategoryIdArg=$parentCategoryId"
 }
 ```
+
+## Mapping data type
+| Jetpack Navigation NavType | JNavType                                                 | 
+|----------------------------|----------------------------------------------------------| 
+| IntType                    | Int::class                                               |
+| LongType                   | Long::class                                              |
+| StringType                 | String::class                                            |
+| BooleanType                | Boolean::class                                           |
+| FloatType                  | Float::class                                             |
+| CustomNavType with Serializable   | CustomNavType::class , dataType = JDataType.Serializable |
+| CustomNavType with Parcelable | CustomNavType::class, dataType = JDataType.Parcelable |
+| Enum | Enum::class, dataType = JDataType.Enum |
+
+## Limitation
+In version 1.0.0, JNav has not yet supported deeplink and StringArrayType, ReferenceType. You can convert it to String.
