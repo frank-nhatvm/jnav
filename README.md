@@ -2,6 +2,12 @@
 JNAV is a library to generate the code for route of Jetpack Compose Navigation.
 
 ## How to use
+### Enable KSP : add this into build.gradle.kts of root project 
+```kotlin
+    plugins {
+        id("com.google.devtools.ksp") version "1.9.10-1.0.13" apply false
+    }
+```
 ###  Add Jnav as dependency into your build gradle of your module
 ```kotlin
     plugins {
