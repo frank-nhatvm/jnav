@@ -17,6 +17,12 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
     ksp("com.fatherofapps:jnav:1.0.0")
 ```
 
+And make sure that your module already added jetpack compose navigation dependency
+```kotlin
+    implementation("androidx.navigation:navigation-common-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+```
+
 ### Add JNav annotation to the screen that you want to generate route
 ```kotlin
     @Composable
