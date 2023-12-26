@@ -1,8 +1,8 @@
-### JNAV : Jetpack compose Navigation 
+# JNAV : Jetpack compose Navigation 
 JNAV is a library to generate the code for route of Jetpack Compose Navigation.
 
 ## How to use
-#  Add Jnav as dependency into your build gradle of your module
+###  Add Jnav as dependency into your build gradle of your module
 ```kotlin
     plugins {
         id("com.google.devtools.ksp")
@@ -11,7 +11,7 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
     ksp("com.fatherofapps:jnav:1.0.0")
 ```
 
-# Add JNav annotation to the screen that you want to generate route
+### Add JNav annotation to the screen that you want to generate route
 ```kotlin
     @Composable
     @JNav(
@@ -39,7 +39,7 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
     }
 ```
 
-# Use generated route
+### Use generated route
 ```kotlin
 NavHost(navController = navController, startDestination = HomeScreenNavigation.route) {
 
@@ -65,7 +65,7 @@ NavHost(navController = navController, startDestination = HomeScreenNavigation.r
 }
 ```
 
-# How does generated route look like?
+### How does generated route look like?
 ```kotlin
 public object CategoryNavigation {
     public const val categoryIdArg: String = "categoryIdArg"
