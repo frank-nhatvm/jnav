@@ -19,7 +19,8 @@ annotation class JNavArg(
     val name: String,
     val type: KClass<*>,
     val isNullable: Boolean = false,
-    val dataType: JDataType = JDataType.Primitive
+    val dataType: JDataType = JDataType.Primitive,
+    val customNavType: KClass<*> = Any::class
 )
 
 enum class JDataType{

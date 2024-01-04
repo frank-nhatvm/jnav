@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.fatherofapps.jnav.sample.data.AddressNavType
 
 @Composable
 fun HostScreen() {
@@ -18,6 +19,8 @@ fun HostScreen() {
                         categoryId = cateId, categoryName = cateName, parentCategoryId = null
                     )
                 )
+            }, openAddress = { address ->
+                navController.navigate(AddressDetailNavigation.createRoute(address))
             })
         }
 
@@ -29,6 +32,17 @@ fun HostScreen() {
                 parentCateId = CategoryNavigation.parentCategoryId(it)
             )
         }
+
+        composable(
+            route = AddressDetailNavigation.route,
+            arguments = AddressDetailNavigation.arguments()
+        ) {
+
+            val address = AddressDetailNavigation.address(it)
+
+            AddressDetailScreen(address = address)
+        }
+
 
     }
 }

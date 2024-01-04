@@ -46,22 +46,21 @@ data class JNavData(
             .initializer("\"${builder.toString()}\"").build()
     }
 
-    fun generateCreateRouteFun(): FunSpec{
+    fun generateCreateRouteFun(): FunSpec {
         val createRouteFun = FunSpec.builder("createRoute").returns(String::class)
 
         val builder = StringBuilder()
         builder.append(baseRoute)
 
-        if(arguments.isNotEmpty()){
-            arguments.sortedBy { it.isNullable }.forEach {
-                jNavTypeData ->
+        if (arguments.isNotEmpty()) {
+            arguments.sortedBy { it.isNullable }.forEach { jNavTypeData ->
                 createRouteFun.addParameter(
                     jNavTypeData.name, jNavTypeData.navArgumentData.returnDatatype
                 )
             }
 
 
-            arguments.forEach {jNavTypeData ->
+            arguments.forEach { jNavTypeData ->
                 if (jNavTypeData.isNullable) {
                     builder.append("?")
                 } else {
@@ -81,6 +80,8 @@ data class JNavData(
     fun listArgumentProperties(): List<PropertySpec> {
         return arguments.map { it.generateProperty() }
     }
+
+    fun listImportClasses() = arguments.flatMap { it.navArgumentData.listImportClass }.toSet()
 
     fun argumentsFunction(): FunSpec {
         val namedNavArgument = ClassName("androidx.navigation", "NamedNavArgument")
@@ -114,80 +115,93 @@ data class JNavTypeData(
     val simpleNameType: String,
     val packageNameType: String,
     val isNullable: Boolean = false,
-    val dataType: JDataType = JDataType.Primitive
+    val dataType: JDataType = JDataType.Primitive,
+    val debugInfo: String = "",
+    val simpleNameCustomNavType: String,
+    val packageNameCustomNavType: String
 ) {
 
 
-     data class NavArgumentData(
+    data class NavArgumentData(
         val returnDatatype: TypeName,
         val getterFun: String,
-        val navType: String
+        val navType: String,
+        val listImportClass: List<ClassName> = emptyList()
     )
 
     private fun initNavArgumentData(): NavArgumentData {
 
-        val (returnDataType, getterFun, navType) = when (simpleNameType) {
+        return when (simpleNameType) {
             "String" -> {
-                Triple(
-                    String::class.asTypeName(),
-                    "getString(${nameArg()})",
-                    "NavType.StringType"
+                NavArgumentData(
+                    returnDatatype = String::class.asTypeName().copy(nullable = isNullable),
+                    getterFun = "getString(${nameArg()})", navType = "NavType.StringType"
                 )
+
             }
 
             "Int" -> {
-                Triple(
-                    Int::class.asTypeName(),
-                    "getInt(${nameArg()})",
-                    "NavType.IntType"
+                NavArgumentData(
+                    returnDatatype = Int::class.asTypeName().copy(nullable = isNullable),
+                    getterFun = "getInt(${nameArg()})",
+                    navType = "NavType.IntType"
                 )
+
             }
 
             "Boolean" -> {
-                Triple(
-                    Boolean::class.asTypeName(),
-                    "getBoolean(${nameArg()})",
-                    "NavType.BoolType"
+                NavArgumentData(
+                    returnDatatype = Boolean::class.asTypeName().copy(nullable = isNullable),
+                    getterFun = "getBoolean(${nameArg()})",
+                    navType = "NavType.BoolType"
                 )
+
+
             }
 
             "Long" -> {
-                Triple(
-                    Long::class.asTypeName(),
-                    "getLong(${nameArg()})",
-                    "NavType.LongType"
+                NavArgumentData(
+                    returnDatatype = Long::class.asTypeName().copy(nullable = isNullable),
+                    getterFun = "getLong(${nameArg()})",
+                    navType = "NavType.LongType"
                 )
+
             }
 
             "Float" -> {
-                Triple(
-                    Float::class.asTypeName(),
-                    "getFloat(${nameArg()})",
-                    "NavType.FloatType"
+                NavArgumentData(
+                    returnDatatype = Float::class.asTypeName().copy(nullable = isNullable),
+                    getterFun = "getFloat(${nameArg()})",
+                    navType = "NavType.FloatType"
                 )
+
+
             }
 
             "LongArray" -> {
-                Triple(
-                    LongArray::class.asTypeName(),
-                    "getLongArray(${nameArg()})",
-                    "NavType.LongArrayType"
+                NavArgumentData(
+                    returnDatatype = LongArray::class.asTypeName().copy(nullable = isNullable),
+                    getterFun = "getLongArray(${nameArg()})",
+                    navType = "NavType.LongArrayType"
                 )
+
             }
 
             "FloatArray" -> {
-                Triple(
-                    FloatArray::class.asTypeName(),
-                    "getFloatArray(${nameArg()})",
-                    "NavType.FloatArrayType"
+                NavArgumentData(
+                    returnDatatype = FloatArray::class.asTypeName().copy(nullable = isNullable),
+                    getterFun = "getFloatArray(${nameArg()})",
+                    navType = "NavType.FloatArrayType"
                 )
+
             }
 
             else -> {
 
                 val typeGetter = when (dataType) {
                     JDataType.Parcelable -> {
-                        "getParcelable(${nameArg()},$simpleNameType::class.java)"
+                        "getParcelable<$simpleNameType>(${nameArg()})"
+                        //"getParcelable(${nameArg()},$simpleNameType::class.java)"
                     }
 
                     JDataType.Serializable -> {
@@ -200,17 +214,26 @@ data class JNavTypeData(
 
                     else -> throw Exception("Do not support data type: $simpleNameType - $dataType")
                 }
-                Triple(
-                    ClassName(packageNameType, simpleNameType), typeGetter,
-                    "NavType.fromArgType(\"$simpleNameType\",\"$packageNameType\")"
+
+                NavArgumentData(
+                    returnDatatype = ClassName(
+                        packageNameType,
+                        simpleNameType
+                    ).copy(nullable = isNullable),
+                    getterFun = typeGetter,
+                    navType = "$simpleNameCustomNavType()",
+                    listImportClass = listOf(
+                        ClassName(packageNameCustomNavType, simpleNameCustomNavType)
+                    )
                 )
+
             }
         }
 
-        return NavArgumentData(returnDataType.copy(nullable = isNullable), getterFun, navType)
+
     }
 
-     val navArgumentData: NavArgumentData = initNavArgumentData()
+    val navArgumentData: NavArgumentData = initNavArgumentData()
 
     fun generateArgument(): String {
         return """
@@ -233,6 +256,7 @@ data class JNavTypeData(
         val builder = StringBuilder()
         builder.append(
             """
+                // $debugInfo
             return·navBackStackEntry.arguments?.${navArgumentData.getterFun}
             """.trimIndent()
         )

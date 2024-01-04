@@ -38,6 +38,9 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
 
         fileSpec.addImport("androidx.navigation", "NavType")
         fileSpec.addImport("androidx.navigation", "navArgument")
+        jNavData.listImportClasses().forEach {
+            fileSpec.addImport(it.packageName, it.simpleName)
+        }
 
         val objectBuilder = TypeSpec.objectBuilder(fileName)
 

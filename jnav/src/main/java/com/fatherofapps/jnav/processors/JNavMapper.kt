@@ -6,6 +6,8 @@ import com.fatherofapps.jnav.models.JNavTypeData
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueArgument
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.ksp.toClassName
 
 
 fun KSAnnotation.toData(pk: String? = null, fn: String? = null): JNavData? {
@@ -45,14 +47,22 @@ fun KSAnnotation.toData(pk: String? = null, fn: String? = null): JNavData? {
             val dataType = dataType(ksDataType)
 
             val type = paramAnnotation.arguments.find { it.name?.asString() == "type" }
-            if (type != null) {
+            val customNavType =
+                paramAnnotation.arguments.find { it.name?.asString() == "customNavType" }
+            if (type != null && customNavType != null) {
                 val (simpleNameType, packageNameType) = resolveKClass(type)
+                val (simpleNameCustomNavType, packageNameCustomNavType) = resolveKClass(
+                    customNavType
+                )
+
                 val navTypeData = JNavTypeData(
                     name = navTypeName,
                     simpleNameType = simpleNameType,
                     packageNameType = packageNameType,
                     isNullable = nullableNavType,
-                    dataType = dataType
+                    dataType = dataType,
+                    simpleNameCustomNavType = simpleNameCustomNavType,
+                    packageNameCustomNavType = packageNameCustomNavType
                 )
                 listOfJNavTypeData.add(navTypeData)
             }
@@ -76,6 +86,7 @@ fun KSAnnotation.toData(pk: String? = null, fn: String? = null): JNavData? {
     return null
 }
 
+
 private fun dataType(ksType: KSType): JDataType {
 
     val simpleName = ksType.declaration.simpleName.asString()
@@ -93,6 +104,7 @@ private fun dataType(ksType: KSType): JDataType {
 
 private fun resolveKClass(typeArgument: KSValueArgument): Pair<String, String> {
     val ksType = typeArgument.value as KSType
+
     val simpleName = ksType.declaration.simpleName.asString()
     val packageName = ksType.declaration.packageName.asString()
 
