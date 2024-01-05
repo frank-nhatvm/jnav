@@ -13,8 +13,8 @@ JNAV is a library to generate the code for route of Jetpack Compose Navigation.
     plugins {
         id("com.google.devtools.ksp")
     }
-    implementation("com.fatherofapps:jnav:1.0.0")
-    ksp("com.fatherofapps:jnav:1.0.0")
+    implementation("com.fatherofapps:jnav:1.0.1")
+    ksp("com.fatherofapps:jnav:1.0.1")
 ```
 
 And make sure that your module already added jetpack compose navigation dependency
@@ -51,6 +51,39 @@ And make sure that your module already added jetpack compose navigation dependen
     }
 ```
 
+### Jav with Custom NavType
+```kotlin
+@Parcelize
+data class Address(
+    val id: Int = -1,
+    val street: String = ""
+): Parcelable{
+    // ...
+}
+
+class AddressNavType: NavType<Address>(isNullableAllowed = true) {
+    // ...
+}
+
+@Composable
+@JNav(
+    name = "AddressDetailNavigation",
+    baseRoute = "address_detail_route",
+    destination = "address_detail_destination",
+    arguments = [
+        JNavArg(
+            name = "address",
+            type = Address::class,
+            dataType = JDataType.Parcelable,
+            customNavType = AddressNavType::class
+        )
+    ]
+)
+fun AddressDetailScreen(address: Address) {
+    
+}
+```
+
 ### Use generated route
 ```kotlin
 NavHost(navController = navController, startDestination = HomeScreenNavigation.route) {
@@ -62,6 +95,8 @@ NavHost(navController = navController, startDestination = HomeScreenNavigation.r
                     categoryId = cateId, categoryName = cateName, parentCategoryId = null
                 )
             )
+        }, openAddress = { address ->
+            navController.navigate(AddressDetailNavigation.createRoute(address))
         })
     }
 
@@ -72,6 +107,16 @@ NavHost(navController = navController, startDestination = HomeScreenNavigation.r
             categoryName = CategoryNavigation.categoryName(it),
             parentCateId = CategoryNavigation.parentCategoryId(it)
         )
+    }
+
+    composable(
+        route = AddressDetailNavigation.route,
+        arguments = AddressDetailNavigation.arguments()
+    ) {
+
+        val address = AddressDetailNavigation.address(it)
+
+        AddressDetailScreen(address = address)
     }
 
 }
@@ -138,4 +183,4 @@ public object CategoryNavigation {
 | Enum | Enum::class, dataType = JDataType.Enum |
 
 ## Limitation
-In version 1.0.0, JNav has not yet supported deeplink and StringArrayType, ReferenceType. You can convert it to String.
+In version 1.0.1, JNav has not yet supported deeplink and StringArrayType, ReferenceType. You can convert it to String.
