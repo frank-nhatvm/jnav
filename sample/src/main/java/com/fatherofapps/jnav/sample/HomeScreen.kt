@@ -35,7 +35,7 @@ import com.fatherofapps.jnav.sample.data.Address
 @Composable
 @JNav(
     destination = "home_destination",
-    baseRoute = "home_route"
+    baseRoute = "home2_route"
 )
 fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Unit) {
 
@@ -64,7 +64,7 @@ fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Un
             Text("Home")
         }, actions = {
             IconButton(onClick = {
-                rememberOpenAddress(Address(id = 10, street = "Hoang Hoa Tham"))
+                rememberOpenAddress(Address(id = 10, street = " 210 Hoang Quoc Viet"))
             }) {
                 Icon(Icons.Default.AccountCircle, contentDescription = "address icon")
             }

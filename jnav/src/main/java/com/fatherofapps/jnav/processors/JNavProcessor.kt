@@ -2,7 +2,6 @@ package com.fatherofapps.jnav.processors
 
 import com.fatherofapps.jnav.annotations.JNav
 import com.fatherofapps.jnav.models.JNavData
-import com.google.devtools.ksp.getDeclaredFunctions
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -10,8 +9,6 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSAnnotation
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.FileSpec
@@ -59,7 +56,8 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
         objectBuilder.addProperty(jNavData.routeProperty())
         objectBuilder.addFunction(jNavData.generateCreateRouteFun())
         fileSpec.addType(objectBuilder.build())
-        fileSpec.build().writeTo(environment.codeGenerator, false)
+        val dependencies = if(jNavData.dependenciesFile != null) listOf(jNavData.dependenciesFile) else emptyList()
+        fileSpec.build().writeTo(environment.codeGenerator, false, dependencies)
 
     }
 
@@ -70,9 +68,9 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
     ) : KSVisitorVoid() {
 
 
-        override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-            classDeclaration.getDeclaredFunctions().forEach { it.accept(this, Unit) }
-        }
+//        override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
+//            classDeclaration.getDeclaredFunctions().forEach { it.accept(this, Unit) }
+//        }
 
         override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
 
@@ -94,9 +92,9 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
 
         }
 
-        override fun visitFile(file: KSFile, data: Unit) {
-            file.declarations.forEach { it.accept(this, Unit) }
-        }
+//        override fun visitFile(file: KSFile, data: Unit) {
+//            file.declarations.forEach { it.accept(this, Unit) }
+//        }
 
     }
 

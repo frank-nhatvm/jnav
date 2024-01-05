@@ -3,15 +3,15 @@ package com.fatherofapps.jnav.processors
 import com.fatherofapps.jnav.annotations.JDataType
 import com.fatherofapps.jnav.models.JNavData
 import com.fatherofapps.jnav.models.JNavTypeData
+import com.google.devtools.ksp.containingFile
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueArgument
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.ksp.toClassName
 
 
 fun KSAnnotation.toData(pk: String? = null, fn: String? = null): JNavData? {
     if (shortName.asString() == "JNav") {
+
         val packageName = pk ?: annotationType.resolve().declaration.packageName.asString()
         val fileName = fn ?: annotationType.resolve().declaration.simpleName.asString()
 
@@ -71,6 +71,7 @@ fun KSAnnotation.toData(pk: String? = null, fn: String? = null): JNavData? {
 
         if (name != null && baseRoute != null && destination != null) {
             return JNavData(
+                dependenciesFile = containingFile,
                 packageName = packageName,
                 fileName = fileName,
                 name = name,

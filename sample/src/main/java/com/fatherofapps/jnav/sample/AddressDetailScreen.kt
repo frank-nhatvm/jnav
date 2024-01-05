@@ -45,6 +45,7 @@ fun AddressDetailScreen(address: Address) {
             Text(text = "ID: ${address.id}")
             Spacer(modifier = Modifier.height(12.dp))
             Text(text = "Street: ${address.street}")
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 
