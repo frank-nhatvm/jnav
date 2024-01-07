@@ -1,6 +1,6 @@
 # JNAV : Jetpack compose Navigation 
 JNAV is a library to generate the code for route of Jetpack Compose Navigation.
-
+Check this article to know which problems JNav can help you when work with Jetpack Compose Navigation: https://fatherofapps.com/simplify-jetpack-compose-navigation-with-jnav/
 ## How to use
 ### Enable KSP : add this into build.gradle.kts of root project 
 ```kotlin
