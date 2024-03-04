@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -73,5 +74,8 @@ dependencies {
 
     implementation("androidx.navigation:navigation-common-ktx:2.7.6")
     implementation("androidx.navigation:navigation-compose:2.7.6")
+
+    implementation("com.squareup.moshi:moshi-kotlin:1.11.0")
+
 
 }

@@ -25,7 +25,7 @@ data class JNavData(
 ) {
 
     fun destinationProperty(): PropertySpec {
-        return PropertySpec.builder("destination", String::class).initializer("\"$destination\"")
+        return PropertySpec.builder("destination", String::class).initializer("\"$destination\"").addModifiers(KModifier.OVERRIDE)
             .build()
     }
 
@@ -44,7 +44,7 @@ data class JNavData(
         }
 
         return PropertySpec.builder("route", String::class)
-            .initializer("\"${builder.toString()}\"").build()
+            .initializer("\"${builder.toString()}\"").addModifiers(KModifier.OVERRIDE).build()
     }
 
     fun generateCreateRouteFun(): FunSpec {

@@ -1,5 +1,6 @@
 package com.fatherofapps.jnav.processors
 
+import com.fatherofapps.jnav.JNavigation
 import com.fatherofapps.jnav.annotations.JNav
 import com.fatherofapps.jnav.models.JNavData
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -14,6 +15,7 @@ import com.google.devtools.ksp.symbol.KSVisitorVoid
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.writeTo
+import com.squareup.kotlinpoet.typeNameOf
 
 class JNavProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
 
@@ -40,6 +42,8 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
         }
 
         val objectBuilder = TypeSpec.objectBuilder(fileName)
+        val superTypeClass = typeNameOf<JNavigation>()
+        objectBuilder.addSuperinterface(superTypeClass)
 
         if (jNavData.arguments.isNotEmpty()) {
             objectBuilder.addFunction(jNavData.argumentsFunction())
@@ -56,7 +60,8 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
         objectBuilder.addProperty(jNavData.routeProperty())
         objectBuilder.addFunction(jNavData.generateCreateRouteFun())
         fileSpec.addType(objectBuilder.build())
-        val dependencies = if(jNavData.dependenciesFile != null) listOf(jNavData.dependenciesFile) else emptyList()
+        val dependencies =
+            if (jNavData.dependenciesFile != null) listOf(jNavData.dependenciesFile) else emptyList()
         fileSpec.build().writeTo(environment.codeGenerator, false, dependencies)
 
     }
@@ -84,7 +89,7 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
 
             if (listFuncWithJNav.isNotEmpty()) {
                 val listData = listFuncWithJNav.mapNotNull {
-                    it.toData(packageName,fileName)
+                    it.toData(packageName, fileName)
                 }
                 listData.forEach { generateNavigation(it) }
             }
