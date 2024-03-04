@@ -25,10 +25,15 @@ data class JNavData(
 ) {
 
     fun destinationProperty(): PropertySpec {
-        return PropertySpec.builder("destination", String::class).initializer("\"$destination\"").addModifiers(KModifier.OVERRIDE)
+        return PropertySpec.builder("destination", String::class).initializer("\"$destination\"")
+            .addModifiers(KModifier.OVERRIDE)
             .build()
     }
 
+    fun isTopDestinationProperty(): PropertySpec{
+        return PropertySpec.builder("isTopDestination", Boolean::class).initializer("%L", isTopDestination).addModifiers(KModifier.OVERRIDE)
+            .build()
+    }
     fun routeProperty(): PropertySpec {
 
         val builder = StringBuilder()
@@ -67,7 +72,13 @@ data class JNavData(
                 } else {
                     builder.append("/")
                 }
-                builder.append("\$${jNavTypeData.nameArg()}=\$${jNavTypeData.name}")
+                if (jNavTypeData.simpleNameType == "String") {
+                    val variableName = "encoded${jNavTypeData.name}"
+                    createRouteFun.addStatement(" val $variableName= Uri.encode(${jNavTypeData.name})")
+                    builder.append("\$${jNavTypeData.nameArg()}=\$${variableName}")
+                }else {
+                    builder.append("\$${jNavTypeData.nameArg()}=\$${jNavTypeData.name}")
+                }
             }
 
 
@@ -136,7 +147,10 @@ data class JNavTypeData(
             "String" -> {
                 NavArgumentData(
                     returnDatatype = String::class.asTypeName().copy(nullable = isNullable),
-                    getterFun = "getString(${nameArg()})", navType = "NavType.StringType"
+                    getterFun = "getString(${nameArg()})", navType = "NavType.StringType",
+                    listImportClass = listOf(
+                        ClassName("android.net", "Uri")
+                    )
                 )
 
             }
@@ -252,8 +266,11 @@ data class JNavTypeData(
             .initializer("\"${nameArg()}\"").build()
 
     fun generateGetterFunction(): FunSpec {
-//        return navBackStackEntry.arguments?.getString(placeIdArg)
-//            ?: throw IllegalArgumentException("placeId is required.")
+
+        if(simpleNameType ==  "String" ){
+            return generateGetterFunctionForString()
+        }
+
         val builder = StringBuilder()
         builder.append(
             """
@@ -275,6 +292,27 @@ data class JNavTypeData(
                 builder.toString()
 
             ).build()
+    }
+
+   private fun generateGetterFunctionForString(): FunSpec{
+        val navBackEntryClass = ClassName("androidx.navigation", "NavBackStackEntry")
+        val getterFun = FunSpec.builder(name).addParameter("navBackStackEntry", navBackEntryClass).returns(navArgumentData.returnDatatype)
+
+        val variableName = "encoded$name"
+
+        val builder = StringBuilder()
+        builder.append("·navBackStackEntry.arguments?.${navArgumentData.getterFun}")
+        if (!isNullable) {
+            val message = "$name·is·required"
+            val exceptionCode = CodeBlock.of("·?: throw IllegalArgumentException(%S)", message)
+            //  builder.append("?: throw IllegalArgumentException(\"$message\") ")
+            builder.append(exceptionCode)
+        }
+        getterFun.addStatement("val $variableName = $builder")
+
+        getterFun.addStatement("·return Uri.decode($variableName)")
+
+        return getterFun.build()
     }
 
 }

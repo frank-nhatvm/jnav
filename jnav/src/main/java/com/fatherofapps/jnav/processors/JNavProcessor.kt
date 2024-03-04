@@ -58,6 +58,7 @@ class JNavProcessor(private val environment: SymbolProcessorEnvironment) : Symbo
         }
         objectBuilder.addProperty(jNavData.destinationProperty())
         objectBuilder.addProperty(jNavData.routeProperty())
+        objectBuilder.addProperty(jNavData.isTopDestinationProperty())
         objectBuilder.addFunction(jNavData.generateCreateRouteFun())
         fileSpec.addType(objectBuilder.build())
         val dependencies =

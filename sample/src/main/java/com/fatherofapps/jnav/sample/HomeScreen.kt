@@ -35,7 +35,8 @@ import com.fatherofapps.jnav.sample.data.Address
 @Composable
 @JNav(
     destination = "home_destination",
-    baseRoute = "home2_route"
+    baseRoute = "home2_route",
+    isTopDestination = true
 )
 fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Unit) {
 
