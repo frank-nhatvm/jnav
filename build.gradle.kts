@@ -12,7 +12,7 @@ plugins {
 
 mavenPublishing {
     coordinates("com.fatherofapps", "jnav", "1.0.2")
-    publishToMavenCentral(SonatypeHost.S01)
+    publishToMavenCentral("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
     signAllPublications()
     pom {
         name.set("JNav")
