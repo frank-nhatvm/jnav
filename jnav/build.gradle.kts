@@ -1,7 +1,12 @@
+
+
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
 }
+
+group = "com.fatherofapps.jnav"
+version = "1.0.2"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -21,3 +26,5 @@ dependencies {
     implementation("com.squareup:kotlinpoet:1.15.3")
     implementation("com.squareup:kotlinpoet-ksp:1.15.3")
 }
+
+

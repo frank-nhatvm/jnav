@@ -1,5 +1,8 @@
 package com.fatherofapps.jnav.sample
 
+import android.graphics.ImageDecoder
+import android.graphics.drawable.AnimatedImageDrawable
+import android.widget.ImageView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -28,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.fatherofapps.jnav.annotations.JNav
 import com.fatherofapps.jnav.sample.data.Address
 
@@ -47,7 +52,7 @@ fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Un
     }
 
     val rememberOpenAddress = remember {
-        {address: Address ->
+        { address: Address ->
             openAddress(address)
         }
     }
@@ -79,6 +84,8 @@ fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Un
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(24.dp))
+            WebPView(drawableId = R.drawable.ic_animated_webp, modifier = Modifier.size(200.dp))
+
             TextField(value = cateId, onValueChange = {
                 cateId = it
             }, modifier = Modifier.fillMaxWidth(), label = { Text("Category Id") },
@@ -103,4 +110,22 @@ fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Un
         }
     }
 
+}
+
+@Composable
+fun WebPView(
+    modifier: Modifier = Modifier,
+    drawableId: Int
+) {
+    AndroidView(factory = { context ->
+        val source = ImageDecoder.createSource(context.resources, drawableId)
+        val drawable = ImageDecoder.decodeDrawable(source)
+        val img = ImageView(context)
+        img.setImageDrawable(drawable)
+
+        if(drawable is AnimatedImageDrawable){
+            drawable.start()
+        }
+        img
+    }, modifier = modifier)
 }
