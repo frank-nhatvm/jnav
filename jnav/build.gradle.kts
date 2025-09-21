@@ -4,7 +4,7 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.34.0"
 }
 group = "com.fatherofapps.jnav"
-version = "2.0.3"
+version = "2.0.4"
 
 
 
