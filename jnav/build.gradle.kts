@@ -5,7 +5,7 @@ plugins {
     signing
 }
 group = "com.fatherofapps.jnav"
-version = "2.0.0.3-SNAPSHOT"
+version = "2.0.0.4-SNAPSHOT"
 
 java {
     withJavadocJar()
@@ -30,12 +30,12 @@ dependencies {
 
 
 publishing{
-
+    val sdkVersion  = project.version.toString()
     publications{
         create<MavenPublication>("jnav"){
             groupId = "com.fatherofapps"
             artifactId = "jnav"
-            version = "1.0.2"
+            version = sdkVersion
             from(components["java"])
             pom{
                 name = "JNav"
