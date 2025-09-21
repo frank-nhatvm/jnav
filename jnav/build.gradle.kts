@@ -5,7 +5,7 @@ plugins {
     signing
 }
 group = "com.fatherofapps.jnav"
-version = "2.0.0.4-SNAPSHOT"
+version = "2.0.0.5-SNAPSHOT"
 
 java {
     withJavadocJar()
@@ -65,7 +65,7 @@ publishing{
     repositories {
         maven {
             name = "centralStaging"
-            url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+            url = uri("https://central.sonatype.com/api/v1/publisher/deployments")
             credentials {
                 username = findProperty("mavenCentralUsername") as String? ?: System.getenv("MAVEN_CENTRAL_USERNAME")
                 password = findProperty("mavenCentralPassword") as String? ?: System.getenv("MAVEN_CENTRAL_PASSWORD")
