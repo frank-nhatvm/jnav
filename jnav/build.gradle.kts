@@ -5,7 +5,7 @@ plugins {
     signing
 }
 group = "com.fatherofapps.jnav"
-version = "2.0.0-SNAPSHOT"
+version = "2.0.0.1-SNAPSHOT"
 
 java {
     withJavadocJar()
