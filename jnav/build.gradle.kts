@@ -1,11 +1,10 @@
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
-    id("com.vanniktech.maven.publish") version "0.34.0"
+    id("com.vanniktech.maven.publish")
 }
 group = "com.fatherofapps.jnav"
 version = "2.0.4"
-
 
 
 java {
@@ -56,3 +55,4 @@ mavenPublishing {
         }
     }
 }
+

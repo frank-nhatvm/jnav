@@ -1,7 +1,6 @@
 package com.fatherofapps.jnav.sample
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +46,7 @@ fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Un
     }
 
     val rememberOpenAddress = remember {
-        {address: Address ->
+        { address: Address ->
             openAddress(address)
         }
     }
@@ -79,6 +78,7 @@ fun HomeScreen(openCategory: (Int, String) -> Unit, openAddress: (Address) -> Un
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(24.dp))
+
             TextField(value = cateId, onValueChange = {
                 cateId = it
             }, modifier = Modifier.fillMaxWidth(), label = { Text("Category Id") },
